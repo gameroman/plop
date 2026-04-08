@@ -2,7 +2,6 @@ import fs from "fs";
 import path from "path";
 import inquirer from "inquirer";
 import handlebars from "handlebars";
-import dlv from "dlv";
 import resolve from "resolve";
 
 import bakedInHelpers from "./baked-in-helpers.js";
@@ -12,8 +11,13 @@ import { createRequire } from "node:module";
 import { pathToFileURL } from "url";
 const require = createRequire(import.meta.url);
 
-const dlvBrackets = (obj, propertyPath, defaultValue) =>
-  dlv(obj, propertyPath.replace("[", ".").replace("]", ""), defaultValue);
+function dlvBrackets(obj, key, def) {
+	const k = key.replace("[", ".").replace("]", "").split(".");
+	for (let p = 0; p < k.length; p++) {
+		obj = obj?.[k[p]];
+	}
+	return obj === undefined ? def : obj;
+}
 
 async function nodePlop(plopfilePath = "", plopCfg = {}) {
   let pkgJson = {};
