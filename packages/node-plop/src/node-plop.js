@@ -12,10 +12,8 @@ import { pathToFileURL } from "url";
 const require = createRequire(import.meta.url);
 
 function dlvBrackets(obj, key, def) {
-	const k = key.replace("[", ".").replace("]", "").split(".");
-	for (let p = 0; p < k.length; p++) {
-		obj = obj?.[k[p]];
-	}
+	const ks = key.replace("[", ".").replace("]", "").split(".");
+  for (const k of ks) obj = obj?.[k];
 	return obj === undefined ? def : obj;
 }
 
