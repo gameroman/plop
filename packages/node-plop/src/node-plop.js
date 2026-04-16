@@ -11,10 +11,14 @@ import { createRequire } from "node:module";
 import { pathToFileURL } from "url";
 const require = createRequire(import.meta.url);
 
-function dlvBrackets(obj, key, def) {
-	const ks = key.replace("[", ".").replace("]", "").split(".");
-  for (const k of ks) obj = obj?.[k];
-	return obj === undefined ? def : obj;
+function dlvBrackets(obj, key) {
+  const result = key
+    .replace("[", ".")
+    .replace("]", "")
+    .split(".")
+    .reduce((acc, k) => acc?.[k], obj);
+
+  return result ?? "";
 }
 
 async function nodePlop(plopfilePath = "", plopCfg = {}) {
@@ -28,7 +32,7 @@ async function nodePlop(plopfilePath = "", plopCfg = {}) {
   const actionTypes = {};
   const helpers = Object.assign(
     {
-      pkg: (propertyPath) => dlvBrackets(pkgJson, propertyPath, ""),
+      pkg: (propertyPath) => dlvBrackets(pkgJson, propertyPath),
     },
     bakedInHelpers,
   );
